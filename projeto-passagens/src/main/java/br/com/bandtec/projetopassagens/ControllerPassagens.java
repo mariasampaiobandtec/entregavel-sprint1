@@ -1,5 +1,6 @@
 package br.com.bandtec.projetopassagens;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -14,15 +15,18 @@ public class ControllerPassagens {
     private boolean verificacao = true;
 
     // POST - Cadastrar PassagemIda
-    @PostMapping("/cadastrar/ida")
-    public void cadastrarPassagemIda(@RequestBody PassagemIda pi) {
+    @PostMapping("/ida")
+    public ResponseEntity cadastrarPassagemIda(@RequestBody PassagemIda pi) {
         listPassagens.add(pi);
+        return ResponseEntity.created(null).build();
+
     }
 
     // POST - Cadastrar PassagemVolta
-    @PostMapping("/cadastrar/volta")
-    public void cadastrarPassagemVolta(@RequestBody PassagemVolta pv) {
+    @PostMapping("/volta")
+    public ResponseEntity cadastrarPassagemVolta(@RequestBody PassagemVolta pv) {
         listPassagens.add(pv);
+        return ResponseEntity.created(null).build();
     }
 
     // GET - Exibir passagens
@@ -47,6 +51,8 @@ public class ControllerPassagens {
                 if (p instanceof PassagemIda) {
                     pa.add(p);
                 }
+
+
             }
         } else if (tipoPassagem.equals("volta")) {
             for (Passagem p : listPassagens) {
@@ -62,9 +68,15 @@ public class ControllerPassagens {
     }
 
     // DELETE - Excluir uma passagem
-    @DeleteMapping("/excluir/{id}")
-    public void excluirPassagem(@PathVariable int id) {
-        listPassagens.remove(id - 1);
+    @DeleteMapping("/{id}")
+    public ResponseEntity excluirPassagem(@PathVariable int id) {
+        if (listPassagens.size() >= id) {
+            listPassagens.remove(id - 1);
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 }
+
 
